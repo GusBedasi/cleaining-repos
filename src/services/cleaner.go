@@ -2,6 +2,7 @@ package services
 
 import (
 	"cleaning-repos/src/clients/github"
+	"cleaning-repos/src/domain"
 	"cleaning-repos/src/logger"
 	"cleaning-repos/src/services/models"
 	"context"
@@ -12,9 +13,9 @@ import (
 	"go.uber.org/zap"
 )
 
-func DeleteRepository(ctx context.Context, fileName string, delete bool) error {
+func DeleteRepository(ctx context.Context, options domain.Options) error {
 	logger.Info("Reading repository file")
-	b, err := os.ReadFile(fileName)
+	b, err := os.ReadFile(options.Filename)
 	if err != nil {
 		logger.Error("Failed reading file",
 			zap.Error(err))
@@ -42,14 +43,14 @@ func DeleteRepository(ctx context.Context, fileName string, delete bool) error {
 			logger.Info("Deleting repository",
 				zap.String("Name", goroutineRepo.Name))
 
-			if !delete {
+			if !options.DeleteEnabled {
 				logger.Info("Repository deleted",
 					zap.String("Name", goroutineRepo.Name))
 
 				return
 			}
 
-			err := github.DeleteRepository(ctx, goroutineRepo.Name)
+			err := github.DeleteRepository(ctx, goroutineRepo.Name, options)
 			if err != nil {
 				logger.Error("Failed to delete repository",
 					zap.String("Repository name", goroutineRepo.Name),

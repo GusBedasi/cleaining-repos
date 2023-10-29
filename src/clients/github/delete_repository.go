@@ -6,15 +6,15 @@ import (
 	"io"
 	"net/http"
 
+	"cleaning-repos/src/domain"
 	"cleaning-repos/src/logger"
 
 	"go.uber.org/zap"
 )
 
-const delete_repo_path = "repos/GusBedasi"
-
-func DeleteRepository(ctx context.Context, repoName string) error {
-	uri := fmt.Sprintf("%s/%s/%s", options.BaseUrl, delete_repo_path, repoName)
+func DeleteRepository(ctx context.Context, repoName string, options domain.Options) error {
+	resource := fmt.Sprintf("repos/%s", options.Owner)
+	uri := fmt.Sprintf("%s/%s/%s", githubOption.BaseUrl, resource, repoName)
 
 	logger.Info("Making request",
 		zap.String("URI", uri))
@@ -24,7 +24,7 @@ func DeleteRepository(ctx context.Context, repoName string) error {
 		return err
 	}
 
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", options.ApiKey))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", githubOption.ApiKey))
 	req.Header.Add("Accept", "application/vnd.github+json")
 	req.Header.Add("X-GitHub-Api-Version", "2022-11-28")
 

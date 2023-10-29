@@ -9,16 +9,17 @@ import (
 	"net/http"
 
 	"cleaning-repos/src/clients/github/models"
+	"cleaning-repos/src/domain"
 )
-
-const update_repo_path = "repos/GusBedasi"
 
 func ModifyRepositoryVisbility(
 	ctx context.Context,
 	repoName string,
-	request models.UpdateRepositoryRequest) error {
+	request models.UpdateRepositoryRequest,
+	options domain.Options) error {
 
-	uri := fmt.Sprintf("%s/%s/%s", options.BaseUrl, update_repo_path, repoName)
+	resource := fmt.Sprintf("repos/%s", options.Owner)
+	uri := fmt.Sprintf("%s/%s/%s", githubOption.BaseUrl, resource, repoName)
 
 	body, err := json.Marshal(request)
 	if err != nil {
@@ -31,7 +32,7 @@ func ModifyRepositoryVisbility(
 		return err
 	}
 
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", options.ApiKey))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", githubOption.ApiKey))
 	req.Header.Add("Accept", "application/vnd.github+json")
 	req.Header.Add("X-GitHub-Api-Version", "2022-11-28")
 

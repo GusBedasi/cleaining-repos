@@ -9,19 +9,19 @@ import (
 	"net/url"
 
 	"cleaning-repos/src/clients/github/models"
+	"cleaning-repos/src/domain"
 	"cleaning-repos/src/logger"
 
 	"go.uber.org/zap"
 )
 
-const list_repo_path = "users/GusBedasi/repos"
-
-func ListRepositories(ctx context.Context) ([]models.RespositoryResponse, error) {
-	uri := fmt.Sprintf("%s/%s?", options.BaseUrl, list_repo_path)
+func ListRepositories(ctx context.Context, options domain.Options) ([]models.RespositoryResponse, error) {
+	resource := fmt.Sprintf("users/%s/repos", options.Owner)
+	uri := fmt.Sprintf("%s/%s?", githubOption.BaseUrl, resource)
 
 	params := url.Values{
-		"type":     {"private"},
-		"per_page": {"100"},
+		"type":     {string(options.ListRepositoryOptions.Type)},
+		"per_page": {fmt.Sprint(options.ListRepositoryOptions.Quantity)},
 	}
 
 	uri = uri + params.Encode()
@@ -34,7 +34,7 @@ func ListRepositories(ctx context.Context) ([]models.RespositoryResponse, error)
 		return nil, err
 	}
 
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", options.ApiKey))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", githubOption.ApiKey))
 	req.Header.Add("Accept", "application/vnd.github+json")
 	req.Header.Add("X-GitHub-Api-Version", "2022-11-28")
 

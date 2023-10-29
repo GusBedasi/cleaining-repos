@@ -12,10 +12,10 @@ const (
 	github_base_url = "https://api.github.com"
 )
 
-var options *githubOptions
+var githubOption *githubOptions
 
 func init() {
-	options = &githubOptions{
+	githubOption = &githubOptions{
 		ApiKey:  os.Getenv(github_api_key),
 		BaseUrl: github_base_url,
 	}
