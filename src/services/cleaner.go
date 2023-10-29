@@ -6,6 +6,7 @@ import (
 	"cleaning-repos/src/logger"
 	"cleaning-repos/src/services/models"
 	"context"
+	"fmt"
 	"os"
 	"sync"
 
@@ -15,9 +16,12 @@ import (
 
 func DeleteRepository(ctx context.Context, options domain.Options) error {
 	logger.Info("Reading repository file")
-	b, err := os.ReadFile(options.Filename)
+
+	filename := fmt.Sprintf("%s.csv", options.Filename)
+	b, err := os.ReadFile(filename)
 	if err != nil {
 		logger.Error("Failed reading file",
+			zap.String("Filename", filename),
 			zap.Error(err))
 		return err
 	}
@@ -39,9 +43,6 @@ func DeleteRepository(ctx context.Context, options domain.Options) error {
 
 		go func(goroutineRepo models.Repository) {
 			defer wg.Done()
-
-			logger.Info("Deleting repository",
-				zap.String("Name", goroutineRepo.Name))
 
 			if !options.DeleteEnabled {
 				logger.Info("Repository deleted",

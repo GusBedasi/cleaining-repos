@@ -29,7 +29,7 @@ func ListRepository(ctx context.Context, options domain.Options) error {
 	logger.Info("Repositories loaded")
 	logger.Info("Writing repositories to file")
 
-	f, err := os.Create(fmt.Sprintf("%s.txt", options.Filename))
+	f, err := os.Create(fmt.Sprintf("%s.csv", options.Filename))
 	if err != nil {
 		logger.Error("Error creating a file",
 			zap.String("Error", err.Error()))
